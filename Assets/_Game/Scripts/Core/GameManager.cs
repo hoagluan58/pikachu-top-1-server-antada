@@ -56,10 +56,18 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // Input (New Input System)
-        var mouse = Mouse.current;
-        if (!inputLocked && mouse != null && mouse.leftButton.wasPressedThisFrame)
-            HandleClick();
+        // Input (New Input System — supports both mouse and touch)
+        if (!inputLocked)
+        {
+            var mouse = Mouse.current;
+            var touch = Touchscreen.current;
+
+            bool clicked = (mouse != null && mouse.leftButton.wasPressedThisFrame);
+            bool tapped = (touch != null && touch.primaryTouch.press.wasPressedThisFrame);
+
+            if (clicked || tapped)
+                HandleClick();
+        }
     }
 
     private void SetupUI()
@@ -98,9 +106,16 @@ public class GameManager : MonoBehaviour
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             return;
 
-        // 3D Raycast from camera through mouse position
-        Vector2 mousePos = Mouse.current.position.ReadValue();
-        Ray ray = Camera.main.ScreenPointToRay(new Vector3(mousePos.x, mousePos.y, 0));
+        // Get pointer position (mouse or touch)
+        Vector2 pointerPos;
+        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)
+            pointerPos = Touchscreen.current.primaryTouch.position.ReadValue();
+        else if (Mouse.current != null)
+            pointerPos = Mouse.current.position.ReadValue();
+        else
+            return;
+
+        Ray ray = Camera.main.ScreenPointToRay(new Vector3(pointerPos.x, pointerPos.y, 0));
 
         if (!Physics.Raycast(ray, out RaycastHit hit, 100f)) return;
 

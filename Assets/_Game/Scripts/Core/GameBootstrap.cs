@@ -87,9 +87,9 @@ public static class GameBootstrap
         cam.clearFlags = CameraClearFlags.SolidColor;
         cam.backgroundColor = new Color(0.08f, 0.10f, 0.15f);
 
-        // Position: above and behind, looking down at ~55°
-        cam.transform.position = new Vector3(0f, 12f, -6.5f);
-        cam.transform.rotation = Quaternion.Euler(58f, 0f, 0f);
+        // Position: above and behind, looking down — adjusted for portrait 9:16
+        cam.transform.position = new Vector3(0f, 16f, -5f);
+        cam.transform.rotation = Quaternion.Euler(70f, 0f, 0f);
     }
 
     private static void SetupDirectionalLight(Light light)
